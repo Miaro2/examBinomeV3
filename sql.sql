@@ -138,7 +138,7 @@ SELECT
     o.id_categorie,
     e.date_emprunt,
     e.date_retour,
-    e.id_membre,
+    e.id_membre AS id_membre_emprunt,
     m.nom AS nom_membre
 FROM 
     gestion_emprunt_objet o
@@ -186,3 +186,4 @@ LEFT JOIN gestion_emprunt_objet o ON o.id_membre = m.id_membre
 LEFT JOIN gestion_emprunt_categorie_objet c ON o.id_categorie = c.id_categorie
 LEFT JOIN gestion_emprunt_emprunt e ON e.id_objet = o.id_objet
 ;
+ALTER TABLE gestion_emprunt_emprunt ADD COLUMN etat_retour VARCHAR(10) DEFAULT NULL;

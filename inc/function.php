@@ -154,5 +154,26 @@ function emprunter($id_objets, $nb_jours) {
     header("Location: ../pages/accueil.php");
     // return $resultat;
 }
+function getEmpruntsAvecEtat($idMembre) {
+
+    $sql = "SELECT o.nom_objet, e.date_emprunt, e.date_retour, e.etat_retour
+            FROM emprunts e
+            JOIN objets o ON e.id_objet = o.id_objet
+            WHERE e.id_membre_emprunt = $idMembre";
+
+    $result = mysqli_query(getdataBase(), $sql);
+    if (!$result) {
+        exit('Erreur SQL : ' . mysqli_error(getdataBase()));
+    }
+
+    $emprunts = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $emprunts[] = $row;
+    }
+
+    return $emprunts;
+}
+
+
 
 ?>

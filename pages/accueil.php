@@ -3,6 +3,7 @@ session_start();
 require('../inc/function.php');
 require('../inc/connection.php');
 
+$idMembreConnecte = $_SESSION['IdMembre'] ?? null;
 $nom = $_SESSION['nom'] ?? 'Visiteur';
 
 $idCategorie = isset($_GET['categorie']) ? intval($_GET['categorie']) : null;
@@ -35,7 +36,7 @@ $categories = getCategories();
         <div class="collapse navbar-collapse justify-content-end">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <span class="nav-link text-light"><a href="membre.php">Bienvenue <?= $nom ?></a></span>
+              <span class="nav-link text-light"><a href="membre.php">Bienvenue <?= htmlspecialchars($nom) ?></a></span>
             </li>
           </ul>
         </div>
@@ -100,7 +101,7 @@ $categories = getCategories();
             <option value="">-- Toutes les catégories --</option>
             <?php foreach ($categories as $cat): ?>
               <option value="<?= $cat['id_categorie'] ?>" <?= ($idCategorie == $cat['id_categorie']) ? 'selected' : '' ?>>
-                <?= $cat['nom_categorie'] ?>
+                <?= htmlspecialchars($cat['nom_categorie']) ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -132,6 +133,7 @@ $categories = getCategories();
                   $objet['date_emprunt'] = '-----';
                   $objet['date_retour'] = '-----';
                 }
+                $estEmprunteParUtilisateur = (!$estDisponible && ($objet['id_membre_emprunt'] ?? null) == $idMembreConnecte);
               ?>
               <tr>
                 <td><a href="fiche.php?id=<?= $objet['id_objet'] ?>"><?= htmlspecialchars($objet['nom_objet']) ?></a></td>
@@ -139,17 +141,22 @@ $categories = getCategories();
                 <td><?= htmlspecialchars($objet['date_emprunt']) ?></td>
                 <td><?= htmlspecialchars($objet['date_retour']) ?></td>
 
-                <?php if ($estDisponible): ?>
-                  <td>
+                <td>
+                  <?php if ($estDisponible): ?>
                     <form action="traitement_emprunt.php" method="post" class="d-flex">
                       <input type="hidden" name="id_objet" value="<?= $objet['id_objet'] ?>">
                       <input type="number" name="nb_jours" class="form-control form-control-sm me-2" placeholder="Jours" min="1" max="30" required style="width: 80px;">
                       <button type="submit" class="btn btn-sm btn-success">Emprunter</button>
                     </form>
-                  </td>
-                <?php else: ?>
-                  <td>-</td>
-                <?php endif; ?>
+                  <?php elseif ($estEmprunteParUtilisateur): ?>
+                    <form action="traitement_retour.php" method="get" class="d-flex">
+                      <input type="hidden" name="id_emprunt" value="<?= $objet['id_emprunt'] ?>">
+                      <button type="submit" class="btn btn-sm btn-primary">Retourner</button>
+                    </form>
+                  <?php else: ?>
+                    -
+                  <?php endif; ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php else: ?>
