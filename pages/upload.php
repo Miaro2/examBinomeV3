@@ -11,7 +11,7 @@ if (!isset($_SESSION['id'])) {
 $id_user = $_SESSION['id'];
 $id_categorie = isset($_POST['categorie_nouvelle_objet']) ? $_POST['categorie_nouvelle_objet'] : 0;
 
-$uploadDir = __DIR__ . '/../assets/uploads/';
+$uploadDir = __DIR__ . '/../assets/image/';
 $maxSize = 20 * 1024 * 1024;
 $allowedMimeTypes = ['image/jpeg', 'image/png'];
 
