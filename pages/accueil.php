@@ -119,28 +119,42 @@ $categories = getCategories();
             <th>Nom Membre</th>
             <th>Date Emprunt</th>
             <th>Date Retour</th>
+            <th>Emprunt</th>
           </tr>
         </thead>
         <tbody>
           <?php if (count($getObjet) > 0): ?>
             <?php foreach ($getObjet as $objet): ?>
               <?php
-                if (!isset($objet['nom_membre'])) {
+                $estDisponible = !isset($objet['nom_membre']);
+                if ($estDisponible) {
                   $objet['nom_membre'] = '-----';
                   $objet['date_emprunt'] = '-----';
                   $objet['date_retour'] = '-----';
                 }
               ?>
               <tr>
-                <td><a href="fiche.php?id=<?= $objet['id_objet'] ?>"><?= $objet['nom_objet'] ?></a></td>
-                <td><?= $objet['nom_membre'] ?></td>
-                <td><?= $objet['date_emprunt'] ?></td>
-                <td><?= $objet['date_retour'] ?></td>
+                <td><a href="fiche.php?id=<?= $objet['id_objet'] ?>"><?= htmlspecialchars($objet['nom_objet']) ?></a></td>
+                <td><?= htmlspecialchars($objet['nom_membre']) ?></td>
+                <td><?= htmlspecialchars($objet['date_emprunt']) ?></td>
+                <td><?= htmlspecialchars($objet['date_retour']) ?></td>
+
+                <?php if ($estDisponible): ?>
+                  <td>
+                    <form action="traitement_emprunt.php" method="post" class="d-flex">
+                      <input type="hidden" name="id_objet" value="<?= $objet['id_objet'] ?>">
+                      <input type="number" name="nb_jours" class="form-control form-control-sm me-2" placeholder="Jours" min="1" max="30" required style="width: 80px;">
+                      <button type="submit" class="btn btn-sm btn-success">Emprunter</button>
+                    </form>
+                  </td>
+                <?php else: ?>
+                  <td>-</td>
+                <?php endif; ?>
               </tr>
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="4" class="text-center">Aucun objet trouvé.</td>
+              <td colspan="5" class="text-center">Aucun objet trouvé.</td>
             </tr>
           <?php endif; ?>
         </tbody>

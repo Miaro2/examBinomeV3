@@ -145,5 +145,14 @@ function getMembreById($idMembre) {
     return null;
 }
 
+function emprunter($id_objets, $nb_jours) {
+    $requete = "INSERT INTO gestion_emprunt_emprunt (id_objet, id_membre, date_emprunt, date_retour) 
+                VALUES (%d, %d, NOW(), DATE_ADD(NOW(), INTERVAL %d DAY))";
+    $requete = sprintf($requete, intval($id_objets), intval($_SESSION['id']), intval($nb_jours));
+    $resultat = mysqli_query(getdataBase(), $requete);
+    
+    header("Location: ../pages/accueil.php");
+    // return $resultat;
+}
 
 ?>
